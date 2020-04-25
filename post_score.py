@@ -1,8 +1,17 @@
+'''
+Created by Wallace Long for Inform
+Created Apr 22, 2020
+
+Outputs a score from (0, 1000000) for a post, given its time of posting (datetime),
+number of positive votes, and number of negative votes.
+'''
+
 import scipy.stats as st
 from math import *
-from time import *
+import datetime
 
 # constants
+MAX_SCORE = 1000000
 NOVELTY_WEIGHT = 0.6
 QUALITY_WEIGHT = 1 - NOVELTY_WEIGHT
 DECAY_SHIFT = 3.5
@@ -26,14 +35,13 @@ def z_score(n):
     else:
         num_nines = log(n)
         return z_table(1 - e ** - num_nines)
-        #return z_table(0.999)
 
-# scores range from 0 to 1
+# scores range from 0 to 1000000
 
 def score_post(post_time, pos_votes, neg_votes):
     # novelty
-    cur_time = time()
-    age = cur_time - post_time # seconds
+    cur_time = datetime.datetime.now()
+    age = (cur_time - post_time).total_seconds()
     novelty = 1 / (1 + e ** (age / DAY_IN_SECS - DECAY_SHIFT))
     
     # quality
@@ -46,8 +54,5 @@ def score_post(post_time, pos_votes, neg_votes):
         max_err = z * sqrt(p * (1 - p) / n)
         quality = max(0, p - z * max_err)
     
-    score = novelty * NOVELTY_WEIGHT + quality * QUALITY_WEIGHT
-    return score
-
-for i in range (0, 10):
-    print(str(5 * 10 ** i) + ", " + str(2 * 10 ** i) + ": " + str(score_post(time(), 5 * 10 ** i, 2 * 10 ** i)))
+    score = MAX_SCORE * novelty * NOVELTY_WEIGHT + quality * QUALITY_WEIGHT
+    return floor(score)
