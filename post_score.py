@@ -8,7 +8,7 @@ number of positive votes, and number of negative votes.
 
 import scipy.stats as st
 from math import *
-import datetime
+from time import *
 
 # constants
 MAX_SCORE = 1000000
@@ -40,8 +40,8 @@ def z_score(n):
 
 def score_post(post_time, pos_votes, neg_votes):
     # novelty
-    cur_time = datetime.datetime.now()
-    age = (cur_time - post_time).total_seconds()
+    cur_time = time()
+    age = cur_time - post_time # in seconds
     novelty = 1 / (1 + e ** (age / DAY_IN_SECS - DECAY_SHIFT))
     
     # quality
